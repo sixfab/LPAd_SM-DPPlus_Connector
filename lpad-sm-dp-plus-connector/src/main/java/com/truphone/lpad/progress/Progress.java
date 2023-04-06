@@ -44,12 +44,7 @@ public class Progress {
                                 "; message: " + message + "; totalSteps: " + totalSteps);
                     }
 
-                    percentage = currentStep / totalSteps;
-
-                    if (percentage > 1.0) {
-                        percentage = 1.0;
-                    }
-
+                    percentage = ((double) currentStep / (double) totalSteps) * 100;
                     progressListener.onAction(progressPhase.name(), step.name(), percentage, message);
                 }
             });
@@ -65,4 +60,10 @@ public class Progress {
 
         this.totalSteps = totalSteps;
     }
+
+    public void setProgressPhase(ProgressPhase progressPhase) {
+
+        this.progressPhase = progressPhase;
+    }
+
 }

@@ -3,8 +3,6 @@ package com.truphone.lpa.impl;
 
 import com.truphone.lpa.ApduChannel;
 import com.truphone.lpa.apdu.ApduUtils;
-import com.truphone.lpad.progress.Progress;
-import com.truphone.lpad.progress.ProgressStep;
 import com.truphone.rsp.dto.asn1.rspdefinitions.EnableProfileResponse;
 import com.truphone.util.LogStub;
 import org.apache.commons.codec.DecoderException;
@@ -20,13 +18,11 @@ class EnableProfileWorker {
     private static final Logger LOG = Logger.getLogger(EnableProfileWorker.class.getName());
 
     private final String iccid;
-    private final Progress progress;
     private final ApduChannel apduChannel;
 
-    EnableProfileWorker(String iccid, Progress progress, ApduChannel apduChannel) {
+    EnableProfileWorker(String iccid, ApduChannel apduChannel) {
 
         this.iccid = iccid;
-        this.progress = progress;
         this.apduChannel = apduChannel;
     }
 
@@ -37,8 +33,6 @@ class EnableProfileWorker {
     }
 
     private String convertEnableProfileResponse(String eResponse) {
-
-        progress.stepExecuted(ProgressStep.ENABLE_PROFILE_CONVERTING_RESPONSE, "Enable profile APDU");
 
         try {
             EnableProfileResponse enableProfileResponse = new EnableProfileResponse();
@@ -51,18 +45,13 @@ class EnableProfileWorker {
             }
 
             if (LocalProfileAssistantImpl.PROFILE_RESULT_SUCESS.equals(enableProfileResponse.getEnableResult().toString())) {
-                progress.stepExecuted(ProgressStep.ENABLE_PROFILE_PROFILE_ENABLED, iccid + " profile enabled successfully");
 
                 if (LogStub.getInstance().isDebugEnabled()) {
                     LogStub.getInstance().logDebug(LOG, LogStub.getInstance().getTag() + " - iccid:" + iccid + " profile enabled successfully");
                 }
-
                 apduChannel.sendStatus();
 
-                progress.stepExecuted(ProgressStep.ENABLE_PROFILE_TRIGGERED_PROFILE_SWITCH, iccid + " triggered profile switch");
             } else {
-                progress.stepExecuted(ProgressStep.ENABLE_PROFILE_PROFILE_NOT_ENABLED, iccid + " profile not enabled");
-
                 LOG.info(LogStub.getInstance().getTag() + " - iccid: " + iccid + " profile not enabled");
             }
 
@@ -86,9 +75,6 @@ class EnableProfileWorker {
             LogStub.getInstance().logDebug(LOG, LogStub.getInstance().getTag() + " - Enabling profile: " + iccid);
         }
 
-        progress.setTotalSteps(4);
-        progress.stepExecuted(ProgressStep.ENABLE_PROFILE_ENABLING_PROFILE, "Enabling profile");
-
         String apdu = ApduUtils.enableProfileApdu(iccid, LocalProfileAssistantImpl.TRIGGER_PROFILE_REFRESH);
 
         if (LogStub.getInstance().isDebugEnabled()) {
@@ -96,7 +82,7 @@ class EnableProfileWorker {
         }
 
         String eResponse = apduChannel.transmitAPDU(apdu);
-
+        
         if (LogStub.getInstance().isDebugEnabled()) {
             LogStub.getInstance().logDebug(LOG, LogStub.getInstance().getTag() + " - Enable profile response: " + eResponse);
         }
