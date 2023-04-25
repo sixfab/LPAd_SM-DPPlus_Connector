@@ -47,7 +47,7 @@ public class LocalProfileAssistantImpl implements LocalProfileAssistant {
 
 //        es9Module.configure(rspServerUrl);
         //es9Module.configure();
-        LOG.log(Level.INFO, LogStub.getInstance().getTag() + " - SM-DP connection initiated.");
+        LOG.log(Level.INFO, "SM-DP connection initiated.");
     }
 
     private boolean checkRspServerURL(final String rspServerUrl) {
@@ -59,7 +59,7 @@ public class LocalProfileAssistantImpl implements LocalProfileAssistant {
     public String enableProfile(final String iccid,
                                 final Progress progress) {
 
-        return new EnableProfileWorker(iccid, progress, apduChannel).run();
+        return new EnableProfileWorker(iccid, apduChannel).run();
     }
 
     @Override

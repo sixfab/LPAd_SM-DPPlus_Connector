@@ -94,7 +94,8 @@ public class DownloadProgress {
                                 " - DownloadProgress - calculatePercentage - final: " + percentage);
                     }
 
-                    return percentage > 1.0 ? 1.0 : percentage;
+                    if (percentage > 1.0) percentage = 1.0;;
+                    return percentage * 100.0;
                 }
 
                 private double getTotalPreviousPhases(DownloadProgressPhase downloadProgressPhase) {
